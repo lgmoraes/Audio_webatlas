@@ -1,0 +1,11 @@
+{
+  "name": "Vodio",
+  "version": "0.0.0",
+  "main": "dist/vodio.js",
+  "repository": "https://github.com/lgmoraes/Vodio.git",
+  "author": "Louis Moraes <lmoraes@hotmail.fr>",
+  "license": "MIT",
+  "dependencies": {
+    "font_webatlas": "https://github.com/lgmoraes/Font_webatlas.git"
+  }
+}
