@@ -1,6 +1,6 @@
 /*** PARAMETRES PAR DEFAUT ***/
 
-.vodio {
+.audio {
     width: 100%;
     color: white;
     line-height: 36px;
@@ -12,13 +12,13 @@
     bottom: 0;
 }
 
-.vodio .menu {
+.audio .menu {
     height: 35px;
     background: rgba(0, 0, 0, .5);
     overflow: hidden;
 }
 
-.vodio .progressBar {
+.audio .progressBar {
     height: 4px;
     margin-top: 4px;
     background-color: rgba(180, 180, 180, .3);
@@ -27,32 +27,32 @@
     display: none;
     position: relative;
 }
-.vodio .progressBar:hover {
+.audio .progressBar:hover {
     height: 8px;
     margin-top: 0px;
 }
 
-.vodio .progressBar_actual {
+.audio .progressBar_actual {
     height: 4px;
     background-color: rgb(255, 0, 0);
     transition: height .3s;
     position: absolute;
 }
-.vodio .progressBar:hover .progressBar_actual {
+.audio .progressBar:hover .progressBar_actual {
     height: 8px;
 }
 
-.vodio .progressBar_buffer {
+.audio .progressBar_buffer {
     height: 4px;
     background-color: rgba(201, 201, 201, .3);
     transition: height .3s;
     position: absolute;
 }
-.vodio .progressBar:hover .progressBar_buffer {
+.audio .progressBar:hover .progressBar_buffer {
     height: 8px;
 }
 
-.vodio .progressBar_cursor {
+.audio .progressBar_cursor {
     width: 14px;
     height: 14px;
     margin-left: -7px;
@@ -66,12 +66,12 @@
     left: 0px;
     top: 0px;
 }
-.vodio .progressBar:hover .progressBar_cursor {
+.audio .progressBar:hover .progressBar_cursor {
     transform: scale(1);
 }
 
-.vodio .lecture, .vodio .pause, .vodio .stop, .vodio .volume-high, .vodio .volume-medium, .vodio .volume-low, .vodio .volume-mute,
-.vodio .recommencer, .vodio .chargement, .vodio .speaker-high, .vodio .speaker-medium, .vodio .speaker-low, .vodio .speaker-mute {
+.audio .lecture, .audio .pause, .audio .stop, .audio .volume-high, .audio .volume-medium, .audio .volume-low, .audio .volume-mute,
+.audio .recommencer, .audio .chargement, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
     width: 40px;
     vertical-align: top;
     text-align: center;
@@ -79,17 +79,17 @@
     display: inline-block;
 }
 
-.vodio .hitbox_volume {
+.audio .hitbox_volume {
     width: 40px;
     overflow: hidden;
     transition: .2s;
     display: inline-block;
     position: relative;
 }
-.vodio .hitbox_volume:hover {
+.audio .hitbox_volume:hover {
     width: 120px;
 }
-.vodio .hitbox_volume .bar_volume {
+.audio .hitbox_volume .bar_volume {
     width: 60px;
     height: 5px;
     vertical-align: middle;
@@ -99,60 +99,60 @@
     top: 15px;
     left: 50px;
 }
-.vodio .hitbox_volume .barRemplissage_volume {
+.audio .hitbox_volume .barRemplissage_volume {
     width: 100%;    /* Au démarrage, le volume est a 100% */
     height: 5px;
     background-color: white;
 }
 
 
-.vodio .chargement {
+.audio .chargement {
     animation: rotate_icon infinite 2s linear;
 }
 
-.vodio .timer {
+.audio .timer {
     font-size: 15px;
     vertical-align: top;
 }
 
-.vodio .lecture::before {
+.audio .lecture::before {
     content: "\0114";
 }
 
-.vodio .pause::before {
+.audio .pause::before {
     content: "\0115";
 }
 
-.vodio .volume-high::before {
+.audio .volume-high::before {
     content: "\011d";
     font-size: 17px;
     vertical-align: top;
 }
-.vodio .volume-medium::before {
+.audio .volume-medium::before {
     content: "\011e";
     font-size: 17px;
     vertical-align: top;
 }
-.vodio .volume-low::before {
+.audio .volume-low::before {
     content: "\011f";
     font-size: 17px;
     vertical-align: top;
 }
-.vodio .volume-mute::before {
+.audio .volume-mute::before {
     content: "\0120";
     font-size: 17px;
     vertical-align: top;
 }
 
-.vodio .stop::before {
+.audio .stop::before {
     content: "\0116";
 }
 
-.vodio .recommencer::before {
+.audio .recommencer::before {
     content: "\01fb";
 }
 
-.vodio .chargement::before {
+.audio .chargement::before {
     content: "\0164";
 }
 

@@ -1,8 +1,8 @@
 {
-  "name": "Vodio",
+  "name": "Audio_webatlas",
   "version": "0.0.0",
-  "main": "dist/vodio.js",
-  "repository": "https://github.com/lgmoraes/Vodio.git",
+  "main": "dist/audio.js",
+  "repository": "https://github.com/lgmoraes/Audio_webatlas.git",
   "author": "Louis Moraes <lmoraes@hotmail.fr>",
   "license": "MIT",
   "dependencies": {

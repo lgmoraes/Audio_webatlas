@@ -1,6 +1,6 @@
 /*** LECTEUR AUDIO ***/
 
-function vodio(style, element_dest, options) {
+function audio(style, element_dest, options) {
     if(style === undefined)
         style = "defaut";
     if(element_dest === undefined)
@@ -26,7 +26,7 @@ function vodio(style, element_dest, options) {
 
     this.audio.lecteur = this;
     this.interface.lecteur = this;
-    this.interface.className = "vodio " + style;
+    this.interface.className = "audio " + style;
     this.menu.className = "menu";
     this.btn_lecture.className = "lecture";    
     this.btn_stop.className = "stop";
@@ -115,15 +115,15 @@ function vodio(style, element_dest, options) {
     };
 
     this.progressBar.onmousedown = function(e) {
-        vodio.prototype.lecteurActif = this.parentElement.lecteur;
-        vodio.prototype.action = "CHANGE_CURRENT_TIME";
-        vodio_main(e);
+        audio.prototype.lecteurActif = this.parentElement.lecteur;
+        audio.prototype.action = "CHANGE_CURRENT_TIME";
+        audio_main(e);
     };
 
     this.bar_volume.onmousedown = function(e) {
-        vodio.prototype.lecteurActif = this.parentElement.parentElement.parentElement.lecteur;
-        vodio.prototype.action = "CHANGE_VOLUME";
-        vodio_main(e);
+        audio.prototype.lecteurActif = this.parentElement.parentElement.parentElement.lecteur;
+        audio.prototype.action = "CHANGE_VOLUME";
+        audio_main(e);
     };
 
     addEvent(this.audio, "play", function() {
@@ -185,9 +185,9 @@ function vodio(style, element_dest, options) {
 
 /*** MAIN FUNCTION ***/
 
-vodio_main = function(e) {
-    var action = vodio.prototype.action;
-    var lecteurActif = vodio.prototype.lecteurActif;
+audio_main = function(e) {
+    var action = audio.prototype.action;
+    var lecteurActif = audio.prototype.lecteurActif;
 
     if(action === "CHANGE_CURRENT_TIME") {
         var progressBar = lecteurActif.progressBar;
@@ -212,25 +212,25 @@ vodio_main = function(e) {
 
 /*** WINDOW EVENTS ***/
 addEvent(window, "mousemove", function(e) {
-    if(vodio.prototype.lecteurActif === null)
+    if(audio.prototype.lecteurActif === null)
         return false;
     
-    vodio_main(e);
+    audio_main(e);
 });
 
 addEvent(window, "mouseup", function() {
-    vodio.prototype.lecteurActif = null;
+    audio.prototype.lecteurActif = null;
 });
 
 
 /*** PROTOTYPE ***/
 
-vodio.prototype.lecteurActif = null;
-vodio.prototype.action = null;
+audio.prototype.lecteurActif = null;
+audio.prototype.action = null;
 
 
 /* FONCTIONS PUBLIQUES */
-vodio.prototype.stop = function() {
+audio.prototype.stop = function() {
     this.btn_lecture.className = "lecture";
 
     if(this.audio.readyState !== 0) {                               // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
@@ -239,7 +239,7 @@ vodio.prototype.stop = function() {
     }
 }
 
-vodio.prototype.loadMedia = function(media) {               // Charge le media (url, input, File)
+audio.prototype.loadMedia = function(media) {               // Charge le media (url, input, File)
     if(typeof(media) === "string")                                  // Est une URL
         this.audio.src = media;
     if(window.URL === undefined)                                    // l'objet URL n'est pas géré. IE < 10
@@ -253,14 +253,14 @@ vodio.prototype.loadMedia = function(media) {               // Charge le media (
         this.trigger_error("Le média n'a pas été reconnu.");
 }
 
-vodio.prototype.addToList = function(media) {
+audio.prototype.addToList = function(media) {
     if(Array.isArray(media))
         mediaList.concat(media);
     else
         mediaList.push(media);
 }
 
-vodio.prototype.detruire = function() {
+audio.prototype.detruire = function() {
     this.audio.src = "";
     remove(this.interface);
 }
@@ -268,7 +268,7 @@ vodio.prototype.detruire = function() {
 
 
 /* FONCTIONS PRIVEES */
-vodio.prototype.updateCurrentTime = function() {
+audio.prototype.updateCurrentTime = function() {
     var t = getFormatedTime(this.audio.currentTime);
 
     if(t.h === 0)
@@ -287,12 +287,12 @@ vodio.prototype.updateCurrentTime = function() {
 
 
 
-vodio.prototype.trigger_error = function(msg) {
+audio.prototype.trigger_error = function(msg) {
     var evt = new ErrorEvent('error', {message: msg});
     this.audio.dispatchEvent(evt);
 };
 
-vodio.prototype.majVolume = function() {
+audio.prototype.majVolume = function() {
     var volume = this.audio.volume;
     
     // btn_volume
