@@ -1,5 +1,5 @@
 {
-  "name": "Audio_webatlas",
+  "name": "audio_webatlas",
   "version": "0.0.0",
   "main": "dist/audio.js",
   "repository": "https://github.com/lgmoraes/Audio_webatlas.git",
@@ -7,6 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "atom_webatlas": "^1.0.1",
-    "font_webatlas": "https://github.com/lgmoraes/Font_webatlas.git"
+    "font_webatlas": "^0.6.0"
   }
 }

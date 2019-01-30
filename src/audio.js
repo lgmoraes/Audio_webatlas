@@ -1,6 +1,6 @@
 /*** LECTEUR AUDIO ***/
 
-function audio(style, element_dest, options) {
+function Audio(style, element_dest, options) {
     if(style === undefined)
         style = "defaut";
     if(element_dest === undefined)
@@ -28,8 +28,8 @@ function audio(style, element_dest, options) {
     this.interface.lecteur = this;
     this.interface.className = "audio " + style;
     this.menu.className = "menu";
-    this.btn_lecture.className = "lecture";    
-    this.btn_stop.className = "stop";
+    this.btn_lecture.className = "icon play";    
+    this.btn_stop.className = "icon stop";
     this.mediaList = [];
     // PROGRESS BAR
     this.progressBar.className = "progressBar";
@@ -37,7 +37,7 @@ function audio(style, element_dest, options) {
     this.progressBar_buffer.className = "progressBar_buffer";
     this.progressBar_cursor.className = "progressBar_cursor";
     // VOLUME
-    this.btn_volume.className = "volume-high";
+    this.btn_volume.className = "icon speaker-high";
     this.hitbox_volume.className = "hitbox_volume";
     this.bar_volume.className = "bar_volume";
     this.barRemplissage_volume.className = "barRemplissage_volume";
@@ -91,12 +91,12 @@ function audio(style, element_dest, options) {
         
         if(hasClass("pause", this))
             lecteur.audio.pause();
-        else if(hasClass("lecture", this)) {
+        else if(hasClass("play", this)) {
             lecteur.audio.play();
         }
-        else if(hasClass("recommencer", this)) {
+        else if(hasClass("reload", this)) {
             lecteur.audio.play();
-            this.className = "pause";       // Redemarrer l'audio n'active pas l'event onplay sous IE
+            this.className = "icon pause";       // Redemarrer l'audio n'active pas l'event onplay sous IE
         }
     };
 
@@ -115,23 +115,23 @@ function audio(style, element_dest, options) {
     };
 
     this.progressBar.onmousedown = function(e) {
-        audio.prototype.lecteurActif = this.parentElement.lecteur;
-        audio.prototype.action = "CHANGE_CURRENT_TIME";
+        Audio.prototype.lecteurActif = this.parentElement.lecteur;
+        Audio.prototype.action = "CHANGE_CURRENT_TIME";
         audio_main(e);
     };
 
     this.bar_volume.onmousedown = function(e) {
-        audio.prototype.lecteurActif = this.parentElement.parentElement.parentElement.lecteur;
-        audio.prototype.action = "CHANGE_VOLUME";
+        Audio.prototype.lecteurActif = this.parentElement.parentElement.parentElement.lecteur;
+        Audio.prototype.action = "CHANGE_VOLUME";
         audio_main(e);
     };
 
     addEvent(this.audio, "play", function() {
-        this.lecteur.btn_lecture.className = "pause";
+        this.lecteur.btn_lecture.className = "icon pause";
     });
 
     addEvent(this.audio, "pause", function() {
-        this.lecteur.btn_lecture.className = "lecture";
+        this.lecteur.btn_lecture.className = "icon play";
     });
 
     addEvent(this.audio, "volumechange", function() {
@@ -139,7 +139,7 @@ function audio(style, element_dest, options) {
     });
 
     addEvent(this.audio, "loadstart", function() {
-        this.lecteur.btn_lecture.className = "chargement";
+        this.lecteur.btn_lecture.className = "icon circlecode";
     });
 
     addEvent(this.audio, "canplay", function() {
@@ -148,9 +148,9 @@ function audio(style, element_dest, options) {
         this.lecteur.progressBar.style.display = "block";
 
         if(this.paused === true)
-            this.lecteur.btn_lecture.className = "lecture";
+            this.lecteur.btn_lecture.className = "icon play";
         else
-            this.lecteur.btn_lecture.className = "pause";
+            this.lecteur.btn_lecture.className = "icon pause";
 
         if(t.h === 0)
             this.lecteur.timer_end.innerHTML = t.m + ":" + zerofill(t.s, 2);
@@ -177,7 +177,7 @@ function audio(style, element_dest, options) {
     });
 
     addEvent(this.audio, "ended", function() {
-        this.lecteur.btn_lecture.className = "recommencer";
+        this.lecteur.btn_lecture.className = "icon reload";
     });
 
 }
@@ -186,14 +186,14 @@ function audio(style, element_dest, options) {
 /*** MAIN FUNCTION ***/
 
 audio_main = function(e) {
-    var action = audio.prototype.action;
-    var lecteurActif = audio.prototype.lecteurActif;
+    var action = Audio.prototype.action;
+    var lecteurActif = Audio.prototype.lecteurActif;
 
     if(action === "CHANGE_CURRENT_TIME") {
         var progressBar = lecteurActif.progressBar;
         var audio = lecteurActif.audio;
         var w = progressBar.offsetWidth;
-        var pos = e.clientX - getScreenPositionLeft(progressBar);
+        var pos = e.clientX - progressBar.getBoundingClientRect().left;
         var ratio = pos/w;
         ratio = checkRange(ratio, 0, 1);
         audio.currentTime = ratio*audio.duration;
@@ -202,9 +202,10 @@ audio_main = function(e) {
         var bar_volume = lecteurActif.bar_volume;
         var audio = lecteurActif.audio;
         var w = bar_volume.offsetWidth;
-        var pos = e.clientX - getScreenPositionLeft(bar_volume);
+        var pos = e.clientX - bar_volume.getBoundingClientRect().left;
         var ratio = pos/w;
         ratio = checkRange(ratio, 0, 1);
+
         audio.volume = ratio;
     }
 }
@@ -212,26 +213,26 @@ audio_main = function(e) {
 
 /*** WINDOW EVENTS ***/
 addEvent(window, "mousemove", function(e) {
-    if(audio.prototype.lecteurActif === null)
+    if(Audio.prototype.lecteurActif === null)
         return false;
     
     audio_main(e);
 });
 
 addEvent(window, "mouseup", function() {
-    audio.prototype.lecteurActif = null;
+    Audio.prototype.lecteurActif = null;
 });
 
 
 /*** PROTOTYPE ***/
 
-audio.prototype.lecteurActif = null;
-audio.prototype.action = null;
+Audio.prototype.lecteurActif = null;
+Audio.prototype.action = null;
 
 
 /* FONCTIONS PUBLIQUES */
-audio.prototype.stop = function() {
-    this.btn_lecture.className = "lecture";
+Audio.prototype.stop = function() {
+    this.btn_lecture.className = "icon lecture";
 
     if(this.audio.readyState !== 0) {                               // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
         this.audio.pause();
@@ -239,7 +240,7 @@ audio.prototype.stop = function() {
     }
 }
 
-audio.prototype.loadMedia = function(media) {               // Charge le media (url, input, File)
+Audio.prototype.loadMedia = function(media) {               // Charge le media (url, input, File)
     if(typeof(media) === "string")                                  // Est une URL
         this.audio.src = media;
     if(window.URL === undefined)                                    // l'objet URL n'est pas géré. IE < 10
@@ -253,14 +254,14 @@ audio.prototype.loadMedia = function(media) {               // Charge le media (
         this.trigger_error("Le média n'a pas été reconnu.");
 }
 
-audio.prototype.addToList = function(media) {
+Audio.prototype.addToList = function(media) {
     if(Array.isArray(media))
         mediaList.concat(media);
     else
         mediaList.push(media);
 }
 
-audio.prototype.detruire = function() {
+Audio.prototype.detruire = function() {
     this.audio.src = "";
     remove(this.interface);
 }
@@ -268,7 +269,7 @@ audio.prototype.detruire = function() {
 
 
 /* FONCTIONS PRIVEES */
-audio.prototype.updateCurrentTime = function() {
+Audio.prototype.updateCurrentTime = function() {
     var t = getFormatedTime(this.audio.currentTime);
 
     if(t.h === 0)
@@ -287,23 +288,23 @@ audio.prototype.updateCurrentTime = function() {
 
 
 
-audio.prototype.trigger_error = function(msg) {
+Audio.prototype.trigger_error = function(msg) {
     var evt = new ErrorEvent('error', {message: msg});
     this.audio.dispatchEvent(evt);
 };
 
-audio.prototype.majVolume = function() {
+Audio.prototype.majVolume = function() {
     var volume = this.audio.volume;
     
     // btn_volume
     if(volume === 1)
-        this.btn_volume.className = "volume-high";
+        this.btn_volume.className = "icon speaker-high";
     else if(volume >= 0.5)
-        this.btn_volume.className = "volume-medium";
+        this.btn_volume.className = "icon speaker-medium";
     else if(volume === 0)
-        this.btn_volume.className = "volume-mute";
+        this.btn_volume.className = "icon speaker-mute";
     else
-        this.btn_volume.className = "volume-low";
+        this.btn_volume.className = "icon speaker-low";
 
     // bar_volume
     this.barRemplissage_volume.style.width = (volume*100) + "%";

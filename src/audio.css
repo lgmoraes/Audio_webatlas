@@ -70,8 +70,8 @@
     transform: scale(1);
 }
 
-.audio .lecture, .audio .pause, .audio .stop, .audio .volume-high, .audio .volume-medium, .audio .volume-low, .audio .volume-mute,
-.audio .recommencer, .audio .chargement, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
+.audio .play, .audio .pause, .audio .stop, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute,
+.audio .reload, .audio .circlecode, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
     width: 40px;
     vertical-align: top;
     text-align: center;
@@ -106,7 +106,7 @@
 }
 
 
-.audio .chargement {
+.audio .circlecode {
     animation: rotate_icon infinite 2s linear;
 }
 
@@ -115,48 +115,22 @@
     vertical-align: top;
 }
 
-.audio .lecture::before {
-    content: "\0114";
-}
-
-.audio .pause::before {
-    content: "\0115";
-}
-
-.audio .volume-high::before {
-    content: "\011d";
+.audio .speaker-high::before {
     font-size: 17px;
     vertical-align: top;
 }
-.audio .volume-medium::before {
-    content: "\011e";
+.audio .speaker-medium::before {
     font-size: 17px;
     vertical-align: top;
 }
-.audio .volume-low::before {
-    content: "\011f";
+.audio .speaker-low::before {
     font-size: 17px;
     vertical-align: top;
 }
-.audio .volume-mute::before {
-    content: "\0120";
+.audio .speaker-mute::before {
     font-size: 17px;
     vertical-align: top;
 }
-
-.audio .stop::before {
-    content: "\0116";
-}
-
-.audio .recommencer::before {
-    content: "\01fb";
-}
-
-.audio .chargement::before {
-    content: "\0164";
-}
-
-/*** STYLES ALTERNATIFS ***/
 
 
 
