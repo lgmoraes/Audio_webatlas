@@ -21,6 +21,8 @@ class Audio {
             options.element_dest = document.getElementsByTagName('body')[0];
         
         this.init(options);
+        
+        this.volume = 1;
     }
 
     init(options) {
@@ -118,7 +120,7 @@ class Audio {
             if (audio.volume !== 0)
                 audio.volume = 0;
             else
-                audio.volume = 1;
+                audio.volume = player.volume;
         };
         this.progressBar.onmousedown = function (e) {
             Audio.prototype.activePlayer = this.parentElement.player;
@@ -264,6 +266,7 @@ class Audio {
             ratio = checkRange(ratio, 0, 1);
     
             audio.volume = ratio;
+            this.volume = ratio;
         }
     }
 }
