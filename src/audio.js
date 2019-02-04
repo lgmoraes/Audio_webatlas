@@ -1,11 +1,29 @@
+addEvent(window, "mousemove", function(e) {
+    if(Audio.prototype.activePlayer === null)
+        return false;
+    
+    Audio.prototype.eventsHandler.call(Audio.prototype.activePlayer, e);
+});
 
-class Audio {
-    constructor(style, element_dest, options) {
-        if (style === undefined)
-            style = "defaut";
-        if (element_dest === undefined)
-            element_dest = document.getElementsByTagName('body')[0];
-        /* INITIALISATION */
+addEvent(window, "mouseup", function() {
+    Audio.prototype.activePlayer = null;
+});
+
+
+class Audio {   
+
+    constructor(options) {
+        if (options === undefined)
+            options = {};
+        if (options.style === undefined)
+            options.style = "defaut";
+        if (options.element_dest === undefined)
+            options.element_dest = document.getElementsByTagName('body')[0];
+        
+        this.init(options);
+    }
+
+    init(options) {
         this.audio = document.createElement('audio');
         this.interface = document.createElement('div');
         this.menu = document.createElement('div');
@@ -21,9 +39,10 @@ class Audio {
         this.barRemplissage_volume = document.createElement('div');
         this.timer_actual = divTxt("auto", "0:00");
         this.timer_end = divTxt("auto", "0:00");
-        this.audio.lecteur = this;
-        this.interface.lecteur = this;
-        this.interface.className = "audio " + style;
+        this.audio.player = this;
+        this.interface.player = this;
+        this.bar_volume.player = this;
+        this.interface.className = "audio " + options.style;
         this.menu.className = "menu";
         this.btn_lecture.className = "icon play";
         this.btn_stop.className = "icon stop";
@@ -59,9 +78,9 @@ class Audio {
         this.progressBar.appendChild(this.progressBar_cursor);
         this.interface.appendChild(this.progressBar);
         this.interface.appendChild(this.menu);
-        element_dest.appendChild(this.interface);
+        options.element_dest.appendChild(this.interface);
         /* SET POSITION AND SIZE */
-        if (options !== undefined) {
+        if (options.x !== undefined) {
             this.interface.style.left = options.x + "px";
             this.interface.style.top = options.y + "px";
             this.interface.style.bottom = "auto";
@@ -77,88 +96,83 @@ class Audio {
             e.preventDefault();
         });
         this.btn_lecture.onmousedown = function () {
-            var lecteur = this.parentElement.parentElement.lecteur;
+            var player = this.parentElement.parentElement.player;
             if (hasClass("pause", this))
-                lecteur.audio.pause();
+                player.audio.pause();
             else if (hasClass("play", this)) {
-                lecteur.audio.play();
+                player.audio.play();
             }
             else if (hasClass("reload", this)) {
-                lecteur.audio.play();
+                player.audio.play();
                 this.className = "icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
             }
         };
         this.btn_stop.onclick = function () {
-            var lecteur = this.parentElement.parentElement.lecteur;
-            lecteur.stop();
+            var player = this.parentElement.parentElement.player;
+            player.stop();
         };
         this.btn_volume.onclick = function () {
-            var audio = this.parentElement.parentElement.parentElement.lecteur.audio;
+            var player = this.parentElement.parentElement.parentElement.player
+            var audio = player.audio;
+    
             if (audio.volume !== 0)
                 audio.volume = 0;
             else
                 audio.volume = 1;
         };
         this.progressBar.onmousedown = function (e) {
-            Audio.prototype.lecteurActif = this.parentElement.lecteur;
+            Audio.prototype.activePlayer = this.parentElement.player;
             Audio.prototype.action = "CHANGE_CURRENT_TIME";
-            audio_main(e);
+            Audio.prototype.eventsHandler.call(this.player,e);
         };
         this.bar_volume.onmousedown = function (e) {
-            Audio.prototype.lecteurActif = this.parentElement.parentElement.parentElement.lecteur;
+            Audio.prototype.activePlayer = this.parentElement.parentElement.parentElement.player;
             Audio.prototype.action = "CHANGE_VOLUME";
-            audio_main(e);
+            Audio.prototype.eventsHandler.call(this.player,e);
         };
         addEvent(this.audio, "play", function () {
-            this.lecteur.btn_lecture.className = "icon pause";
+            this.player.btn_lecture.className = "icon pause";
         });
         addEvent(this.audio, "pause", function () {
-            this.lecteur.btn_lecture.className = "icon play";
+            this.player.btn_lecture.className = "icon play";
         });
         addEvent(this.audio, "volumechange", function () {
-            this.lecteur.majVolume();
+            this.player.majVolume();
         });
         addEvent(this.audio, "loadstart", function () {
-            this.lecteur.btn_lecture.className = "icon circlecode";
+            this.player.btn_lecture.className = "icon circlecode";
         });
         addEvent(this.audio, "canplay", function () {
             var t = getFormatedTime(this.duration);
-            this.lecteur.progressBar.style.display = "block";
+            this.player.progressBar.style.display = "block";
             if (this.paused === true)
-                this.lecteur.btn_lecture.className = "icon play";
+                this.player.btn_lecture.className = "icon play";
             else
-                this.lecteur.btn_lecture.className = "icon pause";
+                this.player.btn_lecture.className = "icon pause";
             if (t.h === 0)
-                this.lecteur.timer_end.innerHTML = t.m + ":" + zerofill(t.s, 2);
+                this.player.timer_end.innerHTML = t.m + ":" + zerofill(t.s, 2);
             else
-                this.lecteur.timer_end.innerHTML = t.h + ":" + zerofill(t.m, 2) + ":" + zerofill(t.s, 2);
-            this.lecteur.updateCurrentTime();
+                this.player.timer_end.innerHTML = t.h + ":" + zerofill(t.m, 2) + ":" + zerofill(t.s, 2);
+            this.player.updateCurrentTime();
         });
         addEvent(this.audio, "timeupdate", function () {
-            this.lecteur.updateCurrentTime();
+            this.player.updateCurrentTime();
         });
         addEvent(this.audio, "progress", function () {
             var buf = this.buffered;
             if (buf.length === 1) {
                 var buffuredTime = buf.end(0);
-                var ratio = buffuredTime / this.lecteur.audio.duration;
-                this.lecteur.progressBar_buffer.style.width = ratio * this.lecteur.progressBar.offsetWidth + "px";
+                var ratio = buffuredTime / this.player.audio.duration;
+                this.player.progressBar_buffer.style.width = ratio * this.player.progressBar.offsetWidth + "px";
             }
             else
-                this.lecteur.progressBar_buffer.style.width = "0";
+                this.player.progressBar_buffer.style.width = "0";
         });
         addEvent(this.audio, "ended", function () {
-            this.lecteur.btn_lecture.className = "icon reload";
+            this.player.btn_lecture.className = "icon reload";
         });
     }
-    /* FONCTIONS PUBLIQUES */
-    stop() {
-        this.btn_lecture.className = "icon lecture";
-        if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
-            this.audio.pause();
-            this.audio.currentTime = 0;
-        }
-    }
+
     loadMedia(media) {
         if (typeof (media) === "string") // Est une URL
             this.audio.src = media;
@@ -173,17 +187,27 @@ class Audio {
                 this.trigger_error("Le média n'a pas été reconnu.");
         }
     }
+    
     addToList(media) {
         if (Array.isArray(media))
             mediaList.concat(media);
         else
             mediaList.push(media);
     }
-    detruire() {
+    
+    stop() {
+        this.btn_lecture.className = "icon lecture";
+        if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
+            this.audio.pause();
+            this.audio.currentTime = 0;
+        }
+    }
+
+    remove() {
         this.audio.src = "";
         remove(this.interface);
     }
-    /* FONCTIONS PRIVEES */
+    
     updateCurrentTime() {
         var t = getFormatedTime(this.audio.currentTime);
         if (t.h === 0)
@@ -197,10 +221,12 @@ class Audio {
         this.progressBar_actual.style.width = positionX + "px";
         this.progressBar_cursor.style.left = positionX + "px";
     }
+    
     trigger_error(msg) {
         var evt = new ErrorEvent('error', { message: msg });
         this.audio.dispatchEvent(evt);
     }
+    
     majVolume() {
         var volume = this.audio.volume;
         // btn_volume
@@ -215,51 +241,32 @@ class Audio {
         // bar_volume
         this.barRemplissage_volume.style.width = (volume * 100) + "%";
     }
-}
-
-
-/*** MAIN FUNCTION ***/
-
-audio_main = function(e) {
-    var action = Audio.prototype.action;
-    var lecteurActif = Audio.prototype.lecteurActif;
-
-    if(action === "CHANGE_CURRENT_TIME") {
-        var progressBar = lecteurActif.progressBar;
-        var audio = lecteurActif.audio;
-        var w = progressBar.offsetWidth;
-        var pos = e.clientX - progressBar.getBoundingClientRect().left;
-        var ratio = pos/w;
-        ratio = checkRange(ratio, 0, 1);
-        audio.currentTime = ratio*audio.duration;
-    }
-    else if(action === "CHANGE_VOLUME") {
-        var bar_volume = lecteurActif.bar_volume;
-        var audio = lecteurActif.audio;
-        var w = bar_volume.offsetWidth;
-        var pos = e.clientX - bar_volume.getBoundingClientRect().left;
-        var ratio = pos/w;
-        ratio = checkRange(ratio, 0, 1);
-
-        audio.volume = ratio;
-    }
-}
-
-
-/*** WINDOW EVENTS ***/
-addEvent(window, "mousemove", function(e) {
-    if(Audio.prototype.lecteurActif === null)
-        return false;
     
-    audio_main(e);
-});
+    eventsHandler(e) {
+        var action = Audio.prototype.action;
+        var activePlayer = Audio.prototype.activePlayer;
+    
+        if(action === "CHANGE_CURRENT_TIME") {
+            var progressBar = activePlayer.progressBar;
+            var audio = activePlayer.audio;
+            var w = progressBar.offsetWidth;
+            var pos = e.clientX - progressBar.getBoundingClientRect().left;
+            var ratio = pos/w;
+            ratio = checkRange(ratio, 0, 1);
+            audio.currentTime = ratio*audio.duration;
+        }
+        else if(action === "CHANGE_VOLUME") {
+            var bar_volume = activePlayer.bar_volume;
+            var audio = activePlayer.audio;
+            var w = bar_volume.offsetWidth;
+            var pos = e.clientX - bar_volume.getBoundingClientRect().left;
+            var ratio = pos/w;
+            ratio = checkRange(ratio, 0, 1);
+    
+            audio.volume = ratio;
+        }
+    }
+}
 
-addEvent(window, "mouseup", function() {
-    Audio.prototype.lecteurActif = null;
-});
-
-
-/*** PROTOTYPE ***/
-
-Audio.prototype.lecteurActif = null;
-Audio.prototype.action = null;
+Audio.prototype.activePlayer = 1;
+Audio.prototype.action = 2;
