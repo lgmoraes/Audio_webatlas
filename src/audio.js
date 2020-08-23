@@ -1,11 +1,11 @@
-addEvent(window, "mousemove", function(e) {
+Atom.addEvent(window, "mousemove", function(e) {
     if(Audio.prototype.activePlayer === null)
         return false;
     
     Audio.prototype.eventsHandler.call(Audio.prototype.activePlayer, e);
 });
 
-addEvent(window, "mouseup", function() {
+Atom.addEvent(window, "mouseup", function() {
     Audio.prototype.activePlayer = null;
 });
 
@@ -39,8 +39,8 @@ class Audio {
         this.btn_volume = document.createElement('div');
         this.bar_volume = document.createElement('div');
         this.barRemplissage_volume = document.createElement('div');
-        this.timer_actual = divTxt("auto", "0:00");
-        this.timer_end = divTxt("auto", "0:00");
+        this.timer_actual = Atom.divTxt("auto", "0:00");
+        this.timer_end = Atom.divTxt("auto", "0:00");
         this.audio.player = this;
         this.interface.player = this;
         this.bar_volume.player = this;
@@ -65,13 +65,13 @@ class Audio {
         // TIMER
         this.timer_actual.className = "timer";
         this.timer_end.className = "timer";
-        var timer_slash = divTxt("34", "/");
+        var timer_slash = Atom.divTxt("34", "/");
         timer_slash.className = "timer";
-        this.menu.appendChild(widthSpace(20));
+        this.menu.appendChild(Atom.widthSpace(20));
         this.menu.appendChild(this.btn_lecture);
         this.menu.appendChild(this.btn_stop);
         this.menu.appendChild(this.hitbox_volume);
-        this.menu.appendChild(widthSpace(15));
+        this.menu.appendChild(Atom.widthSpace(15));
         this.menu.appendChild(this.timer_actual);
         this.menu.appendChild(timer_slash);
         this.menu.appendChild(this.timer_end);
@@ -91,20 +91,20 @@ class Audio {
             this.menu.style.lineHeight = options.h + "px";
         }
         /* EVENTS */
-        addEvent(this.interface, "mousedown", function (e) {
+        Atom.addEvent(this.interface, "mousedown", function (e) {
             e.preventDefault();
         });
-        addEvent(this.interface, "click", function (e) {
+        Atom.addEvent(this.interface, "click", function (e) {
             e.preventDefault();
         });
         this.btn_lecture.onmousedown = function () {
             var player = this.parentElement.parentElement.player;
-            if (hasClass("pause", this))
+            if (Atom.hasClass("pause", this))
                 player.audio.pause();
-            else if (hasClass("play", this)) {
+            else if (Atom.hasClass("play", this)) {
                 player.audio.play();
             }
-            else if (hasClass("reload", this)) {
+            else if (Atom.hasClass("reload", this)) {
                 player.audio.play();
                 this.className = "icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
             }
@@ -132,35 +132,35 @@ class Audio {
             Audio.prototype.action = "CHANGE_VOLUME";
             Audio.prototype.eventsHandler.call(this.player,e);
         };
-        addEvent(this.audio, "play", function () {
+        Atom.addEvent(this.audio, "play", function () {
             this.player.btn_lecture.className = "icon pause";
         });
-        addEvent(this.audio, "pause", function () {
+        Atom.addEvent(this.audio, "pause", function () {
             this.player.btn_lecture.className = "icon play";
         });
-        addEvent(this.audio, "volumechange", function () {
+        Atom.addEvent(this.audio, "volumechange", function () {
             this.player.majVolume();
         });
-        addEvent(this.audio, "loadstart", function () {
+        Atom.addEvent(this.audio, "loadstart", function () {
             this.player.btn_lecture.className = "icon circlecode";
         });
-        addEvent(this.audio, "canplay", function () {
-            var t = getFormatedTime(this.duration);
+        Atom.addEvent(this.audio, "canplay", function () {
+            var t = Atom.getFormatedTime(this.duration);
             this.player.progressBar.style.display = "block";
             if (this.paused === true)
                 this.player.btn_lecture.className = "icon play";
             else
                 this.player.btn_lecture.className = "icon pause";
             if (t.h === 0)
-                this.player.timer_end.innerHTML = t.m + ":" + zerofill(t.s, 2);
+                this.player.timer_end.innerHTML = t.m + ":" + Atom.zerofill(t.s, 2);
             else
-                this.player.timer_end.innerHTML = t.h + ":" + zerofill(t.m, 2) + ":" + zerofill(t.s, 2);
+                this.player.timer_end.innerHTML = t.h + ":" + Atom.zerofill(t.m, 2) + ":" + Atom.zerofill(t.s, 2);
             this.player.updateCurrentTime();
         });
-        addEvent(this.audio, "timeupdate", function () {
+        Atom.addEvent(this.audio, "timeupdate", function () {
             this.player.updateCurrentTime();
         });
-        addEvent(this.audio, "progress", function () {
+        Atom.addEvent(this.audio, "progress", function () {
             var buf = this.buffered;
             if (buf.length === 1) {
                 var buffuredTime = buf.end(0);
@@ -170,7 +170,7 @@ class Audio {
             else
                 this.player.progressBar_buffer.style.width = "0";
         });
-        addEvent(this.audio, "ended", function () {
+        Atom.addEvent(this.audio, "ended", function () {
             this.player.btn_lecture.className = "icon reload";
         });
     }
@@ -211,11 +211,11 @@ class Audio {
     }
     
     updateCurrentTime() {
-        var t = getFormatedTime(this.audio.currentTime);
+        var t = Atom.getFormatedTime(this.audio.currentTime);
         if (t.h === 0)
-            this.timer_actual.innerHTML = t.m + ":" + zerofill(t.s, 2);
+            this.timer_actual.innerHTML = t.m + ":" + Atom.zerofill(t.s, 2);
         else
-            this.timer_actual.innerHTML = t.h + ":" + zerofill(t.m, 2) + ":" + zerofill(t.s, 2);
+            this.timer_actual.innerHTML = t.h + ":" + Atom.zerofill(t.m, 2) + ":" + Atom.zerofill(t.s, 2);
         /* PROGRESS BAR */
         var w = this.progressBar.offsetWidth;
         var ratio = this.audio.currentTime / this.audio.duration;
@@ -254,7 +254,7 @@ class Audio {
             var w = progressBar.offsetWidth;
             var pos = e.clientX - progressBar.getBoundingClientRect().left;
             var ratio = pos/w;
-            ratio = checkRange(ratio, 0, 1);
+            ratio = Atom.clamp(0, ratio, 1);
             audio.currentTime = ratio*audio.duration;
         }
         else if(action === "CHANGE_VOLUME") {
@@ -263,7 +263,7 @@ class Audio {
             var w = bar_volume.offsetWidth;
             var pos = e.clientX - bar_volume.getBoundingClientRect().left;
             var ratio = pos/w;
-            ratio = checkRange(ratio, 0, 1);
+            ratio = Atom.clamp(0, ratio, 1);
     
             audio.volume = ratio;
             this.volume = ratio;
