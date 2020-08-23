@@ -71,7 +71,7 @@
 }
 
 .audio .play, .audio .pause, .audio .stop, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute,
-.audio .reload, .audio .circlecode, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
+.audio .reload, .audio .spinner-third, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
     width: 40px;
     vertical-align: top;
     text-align: center;
@@ -106,8 +106,8 @@
 }
 
 
-.audio .circlecode {
-    animation: rotate_icon infinite 2s linear;
+.audio .spinner-third {
+    animation: rotate_icon infinite 1s linear;
 }
 
 .audio .timer {

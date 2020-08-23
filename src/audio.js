@@ -142,7 +142,7 @@ class Audio {
             this.player.majVolume();
         });
         Atom.addEvent(this.audio, "loadstart", function () {
-            this.player.btn_lecture.className = "icon circlecode";
+            this.player.btn_lecture.className = "icon spinner-third geometrics";
         });
         Atom.addEvent(this.audio, "canplay", function () {
             var t = Atom.getFormatedTime(this.duration);
