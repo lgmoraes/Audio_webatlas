@@ -198,7 +198,7 @@ class Audio {
     }
     
     stop() {
-        this.btn_lecture.className = "icon lecture";
+        this.btn_lecture.className = "icon play";
         if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
             this.audio.pause();
             this.audio.currentTime = 0;
