@@ -10,8 +10,8 @@ Atom.addEvent(window, "mouseup", function() {
 });
 
 
-class Audio {   
-
+class Audio {
+    
     constructor(options) {
         if (options === undefined)
             options = {};
@@ -19,13 +19,27 @@ class Audio {
             options.style = "defaut";
         if (options.element_dest === undefined)
             options.element_dest = document.getElementsByTagName('body')[0];
+        if (options.loop === undefined)
+            options.loop = this.NO_LOOP;
+        if (options.random === undefined)
+            options.random = false;
+        if (options.btnStop === undefined)
+            options.btnStop = false;
+        if (options.btnLoop === undefined)
+            options.btnLoop = false;
+        if (options.btnRandom === undefined)
+            options.btnRandom = false;
+        if (options.volume === undefined)
+            options.volume = 1;
         
         this.init(options);
         
-        this.volume = 1;
+        this.volume = options.volume;
     }
 
     init(options) {
+        var e = this;
+
         this.audio = document.createElement('audio');
         this.interface = document.createElement('div');
         this.menu = document.createElement('div');
@@ -34,7 +48,6 @@ class Audio {
         this.progressBar_buffer = document.createElement('div');
         this.progressBar_cursor = document.createElement('div');
         this.btn_lecture = document.createElement('div');
-        this.btn_stop = document.createElement('div');
         this.hitbox_volume = document.createElement('div');
         this.btn_volume = document.createElement('div');
         this.bar_volume = document.createElement('div');
@@ -47,7 +60,14 @@ class Audio {
         this.interface.className = "audio " + options.style;
         this.menu.className = "menu";
         this.btn_lecture.className = "icon play";
-        this.btn_stop.className = "icon stop";
+
+        this.options = {
+            btnStop: options.btnStop,
+            btnLoop: options.btnLoop,
+            btnRandom: options.btnRandom,
+            loop: options.loop,
+            random: options.random
+        };
         this.mediaList = [];
         // PROGRESS BAR
         this.progressBar.className = "progressBar";
@@ -69,7 +89,6 @@ class Audio {
         timer_slash.className = "timer";
         this.menu.appendChild(Atom.widthSpace(20));
         this.menu.appendChild(this.btn_lecture);
-        this.menu.appendChild(this.btn_stop);
         this.menu.appendChild(this.hitbox_volume);
         this.menu.appendChild(Atom.widthSpace(15));
         this.menu.appendChild(this.timer_actual);
@@ -81,6 +100,13 @@ class Audio {
         this.interface.appendChild(this.progressBar);
         this.interface.appendChild(this.menu);
         options.element_dest.appendChild(this.interface);
+        /* CUSTOM MENU */
+        if (this.options.btnStop)
+            this.toggleBtnStop();
+        if (this.options.btnLoop)
+            this.toggleBtnLoop();
+        if (this.options.btnRandom)
+            this.toggleBtnRandom();
         /* SET POSITION AND SIZE */
         if (options.x !== undefined) {
             this.interface.style.left = options.x + "px";
@@ -98,20 +124,15 @@ class Audio {
             e.preventDefault();
         });
         this.btn_lecture.onmousedown = function () {
-            var player = this.parentElement.parentElement.player;
             if (Atom.hasClass("pause", this))
-                player.audio.pause();
+                e.audio.pause();
             else if (Atom.hasClass("play", this)) {
-                player.audio.play();
+                e.audio.play();
             }
             else if (Atom.hasClass("reload", this)) {
-                player.audio.play();
+                e.audio.play();
                 this.className = "icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
             }
-        };
-        this.btn_stop.onclick = function () {
-            var player = this.parentElement.parentElement.player;
-            player.stop();
         };
         this.btn_volume.onclick = function () {
             var player = this.parentElement.parentElement.parentElement.player
@@ -171,7 +192,15 @@ class Audio {
                 this.player.progressBar_buffer.style.width = "0";
         });
         Atom.addEvent(this.audio, "ended", function () {
-            this.player.btn_lecture.className = "icon reload";
+            if (e.options.loop === e.NO_LOOP) {
+                e.btn_lecture.className = "icon reload";
+            }
+            else if (e.options.loop === e.LOOP) {
+                e.audio.play();
+            }
+            else if (e.options.loop === e.LOOP_UNIQUE) {
+                e.audio.play();
+            }
         });
     }
 
@@ -196,7 +225,7 @@ class Audio {
         else
             mediaList.push(media);
     }
-    
+
     stop() {
         this.btn_lecture.className = "icon play";
         if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
@@ -243,7 +272,124 @@ class Audio {
         // bar_volume
         this.barRemplissage_volume.style.width = (volume * 100) + "%";
     }
+
+    toggleBtnStop() {
+        if (this.btn_stop === undefined) {
+            this.btn_stop = document.createElement('div');
+            this.btn_stop.className = "icon stop";
+
+            this.menu.insertBefore(this.btn_stop, this.btn_volume.parentElement);
+
+            this.btn_stop.onclick = function () {
+                var player = this.parentElement.parentElement.player;
+                player.stop();
+            };
+
+            this.btn_stop.style.display = "inline-block";
+            return false;
+        }
+
+        this.options.btnStop = !this.options.btnStop;
+        this.btn_stop.style.display = this.options.btnStop ? "inline-block" : "none";
+    }
+
+    toggleBtnLoop() {
+        var e = this;
+        
+        if (this.btn_loop === undefined) {
+            this.btn_loop = document.createElement('div');
+            this.btn_loop.className = "icon";
+
+            if (this.options.loop === this.NO_LOOP) {
+                Atom.addClass("loop", this.btn_loop);
+                Atom.addClass("disabled", this.btn_loop);
+            }
+            else if (this.options.loop === this.LOOP) {
+                Atom.addClass("loop", this.btn_loop);
+            }
+            else if (this.options.loop === this.LOOP_UNIQUE) {
+                Atom.addClass("loopUnique", this.btn_loop);
+            } 
+
+            this.menu.insertBefore(this.btn_loop, this.btn_volume.parentElement);
+            
+            this.btn_loop.onclick = function () {
+                e.toggleLoop();
+            };
+
+            this.btn_loop.style.display = "inline-block";
+            return false;
+        }
+
+        this.options.btnLoop = !this.options.btnLoop;
+        this.btn_loop.style.display = this.options.btnLoop ? "inline-block" : "none";
+    }
     
+    toggleLoop() {
+        var opts = this.options;
+
+        opts.loop++;
+        if(opts.loop > this.LOOP_UNIQUE)
+            opts.loop = this.NO_LOOP;
+
+        if (this.btn_loop === undefined)
+            return false;
+
+        var btn = this.btn_loop;
+
+        if (opts.loop === this.NO_LOOP) {
+            Atom.addClass("loop", btn);
+            Atom.removeClass("loopUnique", btn);
+            Atom.addClass("disabled", btn);
+        }
+        else if (opts.loop === this.LOOP) {
+            Atom.addClass("loop", btn);
+            Atom.removeClass("loopUnique", btn);
+            Atom.removeClass("disabled", btn);
+        }
+        else if (opts.loop === this.LOOP_UNIQUE) {
+            Atom.removeClass("loop", btn);
+            Atom.addClass("loopUnique", btn);
+            Atom.removeClass("disabled", btn);
+        }
+    }
+
+    toggleBtnRandom() {
+        var e = this;
+
+        if (this.btn_random === undefined) {
+            this.btn_random = document.createElement('div');
+            this.btn_random.className = "icon random";
+
+            if (this.options.random === false)
+                Atom.addClass("disabled", this.btn_random);
+
+            this.menu.insertBefore(this.btn_random, this.btn_volume.parentElement);
+
+            this.btn_random.onclick = function () {
+                e.toggleRandom();
+            };
+
+            this.btn_random.style.display = "inline-block";
+            return false;
+        }
+
+        this.options.btnRandom = !this.options.btnRandom;
+        this.btn_random.style.display = this.options.btnRandom ? "inline-block" : "none";
+    }
+
+    toggleRandom() {
+        var opts = this.options;
+        var btn = this.btn_random;
+
+        opts.random = !opts.random;
+
+        if (opts.random)
+            Atom.removeClass("disabled", btn);
+        else
+            Atom.addClass("disabled", btn);
+    }
+
     eventsHandler(e) {
         var action = Audio.prototype.action;
         var activePlayer = Audio.prototype.activePlayer;
@@ -271,5 +417,6 @@ class Audio {
     }
 }
 
-Audio.prototype.activePlayer = 1;
-Audio.prototype.action = 2;
+Audio.prototype.NO_LOOP = 0;
+Audio.prototype.LOOP = 1;
+Audio.prototype.LOOP_UNIQUE = 2;

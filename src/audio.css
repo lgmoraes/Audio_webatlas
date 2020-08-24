@@ -70,13 +70,17 @@
     transform: scale(1);
 }
 
-.audio .play, .audio .pause, .audio .stop, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute,
+.audio .play, .audio .pause, .audio .stop, .audio .loop, .audio .loopUnique, .audio .random, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute,
 .audio .reload, .audio .spinner-third, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
     width: 40px;
     vertical-align: top;
     text-align: center;
     cursor: pointer;
     display: inline-block;
+}
+
+.audio .loop.disabled, .audio .random.disabled {
+    opacity: .5;
 }
 
 .audio .hitbox_volume {
