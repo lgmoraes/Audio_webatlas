@@ -114,6 +114,7 @@
 }
 
 .audio .timer {
+    font-family: "WebAtlas-icons";
     font-size: 15px;
     vertical-align: top;
 }
