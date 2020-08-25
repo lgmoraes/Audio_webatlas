@@ -70,8 +70,7 @@
     transform: scale(1);
 }
 
-.audio .play, .audio .pause, .audio .stop, .audio .loop, .audio .loopUnique, .audio .random, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute,
-.audio .reload, .audio .spinner-third, .audio .speaker-high, .audio .speaker-medium, .audio .speaker-low, .audio .speaker-mute {
+.audio .btn {
     width: 40px;
     vertical-align: top;
     text-align: center;

@@ -59,7 +59,7 @@ class Audio {
         this.bar_volume.player = this;
         this.interface.className = "audio " + options.style;
         this.menu.className = "menu";
-        this.btn_lecture.className = "icon play";
+        this.btn_lecture.className = "btn icon play";
 
         this.options = {
             btnStop: options.btnStop,
@@ -75,7 +75,7 @@ class Audio {
         this.progressBar_buffer.className = "progressBar_buffer";
         this.progressBar_cursor.className = "progressBar_cursor";
         // VOLUME
-        this.btn_volume.className = "icon speaker-high";
+        this.btn_volume.className = "btn icon speaker-high";
         this.hitbox_volume.className = "hitbox_volume";
         this.bar_volume.className = "bar_volume";
         this.barRemplissage_volume.className = "barRemplissage_volume";
@@ -131,7 +131,7 @@ class Audio {
             }
             else if (Atom.hasClass("reload", this)) {
                 e.audio.play();
-                this.className = "icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
+                this.className = "btn icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
             }
         };
         this.btn_volume.onclick = function () {
@@ -154,24 +154,24 @@ class Audio {
             Audio.prototype.eventsHandler.call(this.player,e);
         };
         Atom.addEvent(this.audio, "play", function () {
-            this.player.btn_lecture.className = "icon pause";
+            this.player.btn_lecture.className = "btn icon pause";
         });
         Atom.addEvent(this.audio, "pause", function () {
-            this.player.btn_lecture.className = "icon play";
+            this.player.btn_lecture.className = "btn icon play";
         });
         Atom.addEvent(this.audio, "volumechange", function () {
             this.player.majVolume();
         });
         Atom.addEvent(this.audio, "loadstart", function () {
-            this.player.btn_lecture.className = "icon spinner-third geometrics";
+            this.player.btn_lecture.className = "btn icon spinner-third geometrics";
         });
         Atom.addEvent(this.audio, "canplay", function () {
             var t = Atom.getFormatedTime(this.duration);
             this.player.progressBar.style.display = "block";
             if (this.paused === true)
-                this.player.btn_lecture.className = "icon play";
+                this.player.btn_lecture.className = "btn icon play";
             else
-                this.player.btn_lecture.className = "icon pause";
+                this.player.btn_lecture.className = "btn icon pause";
             if (t.h === 0)
                 this.player.timer_end.innerHTML = t.m + ":" + Atom.zerofill(t.s, 2);
             else
@@ -193,7 +193,7 @@ class Audio {
         });
         Atom.addEvent(this.audio, "ended", function () {
             if (e.options.loop === e.NO_LOOP) {
-                e.btn_lecture.className = "icon reload";
+                e.btn_lecture.className = "btn icon reload";
             }
             else if (e.options.loop === e.LOOP) {
                 e.audio.play();
@@ -227,7 +227,7 @@ class Audio {
     }
 
     stop() {
-        this.btn_lecture.className = "icon play";
+        this.btn_lecture.className = "btn icon play";
         if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
             this.audio.pause();
             this.audio.currentTime = 0;
@@ -262,13 +262,13 @@ class Audio {
         var volume = this.audio.volume;
         // btn_volume
         if (volume === 1)
-            this.btn_volume.className = "icon speaker-high";
+            this.btn_volume.className = "btn icon speaker-high";
         else if (volume >= 0.5)
-            this.btn_volume.className = "icon speaker-medium";
+            this.btn_volume.className = "btn icon speaker-medium";
         else if (volume === 0)
-            this.btn_volume.className = "icon speaker-mute";
+            this.btn_volume.className = "btn icon speaker-mute";
         else
-            this.btn_volume.className = "icon speaker-low";
+            this.btn_volume.className = "btn icon speaker-low";
         // bar_volume
         this.barRemplissage_volume.style.width = (volume * 100) + "%";
     }
@@ -276,7 +276,7 @@ class Audio {
     toggleBtnStop() {
         if (this.btn_stop === undefined) {
             this.btn_stop = document.createElement('div');
-            this.btn_stop.className = "icon stop";
+            this.btn_stop.className = "btn icon stop";
 
             this.menu.insertBefore(this.btn_stop, this.btn_volume.parentElement);
 
@@ -298,7 +298,7 @@ class Audio {
         
         if (this.btn_loop === undefined) {
             this.btn_loop = document.createElement('div');
-            this.btn_loop.className = "icon";
+            this.btn_loop.className = "btn icon";
 
             if (this.options.loop === this.NO_LOOP) {
                 Atom.addClass("loop", this.btn_loop);
@@ -359,7 +359,7 @@ class Audio {
 
         if (this.btn_random === undefined) {
             this.btn_random = document.createElement('div');
-            this.btn_random.className = "icon random";
+            this.btn_random.className = "btn icon random";
 
             if (this.options.random === false)
                 Atom.addClass("disabled", this.btn_random);
