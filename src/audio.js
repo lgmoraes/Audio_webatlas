@@ -31,6 +31,8 @@ class Audio {
             options.btnRandom = false;
         if (options.volume === undefined)
             options.volume = 1;
+        if (options.step === undefined)
+            options.step = this.DEFAULT_STEP;
         
         this.init(options);
         
@@ -66,7 +68,8 @@ class Audio {
             btnLoop: options.btnLoop,
             btnRandom: options.btnRandom,
             loop: options.loop,
-            random: options.random
+            random: options.random,
+            step: options.step
         };
         this.mediaList = [];
         // PROGRESS BAR
@@ -135,23 +138,42 @@ class Audio {
             }
         };
         this.btn_volume.onclick = function () {
-            var player = this.parentElement.parentElement.parentElement.player
-            var audio = player.audio;
+            var audio = e.audio;
     
-            if (audio.volume !== 0)
+            if (audio.volume !== 0) {
+                e.volume = audio.volume;
                 audio.volume = 0;
+            }
             else
-                audio.volume = player.volume;
+                audio.volume = e.volume;
         };
         this.progressBar.onmousedown = function (e) {
             Audio.prototype.activePlayer = this.parentElement.player;
             Audio.prototype.action = "CHANGE_CURRENT_TIME";
             Audio.prototype.eventsHandler.call(this.player,e);
         };
+        this.progressBar.onwheel = function (event) {
+            if (Atom.wheelDirection(event) === "UP")
+                e.forward();
+            else
+                e.backward();
+        };
+        this.timer_actual.onwheel = function (event) {
+            if (Atom.wheelDirection(event) === "UP")
+                e.forward();
+            else
+                e.backward();
+        };
         this.bar_volume.onmousedown = function (e) {
             Audio.prototype.activePlayer = this.parentElement.parentElement.parentElement.player;
             Audio.prototype.action = "CHANGE_VOLUME";
             Audio.prototype.eventsHandler.call(this.player,e);
+        };
+        this.hitbox_volume.onwheel = function (event) {
+            if (Atom.wheelDirection(event) === "UP")
+                e.audio.volume = Atom.clamp(0, e.audio.volume + .1, 1);
+            else
+                e.audio.volume = Atom.clamp(0, e.audio.volume - .1, 1);
         };
         Atom.addEvent(this.audio, "play", function () {
             this.player.btn_lecture.className = "btn icon pause";
@@ -232,6 +254,14 @@ class Audio {
             this.audio.pause();
             this.audio.currentTime = 0;
         }
+    }
+
+    forward() {
+        this.audio.currentTime += this.options.step;
+    }
+
+    backward() {
+        this.audio.currentTime -= this.options.step;
     }
 
     remove() {
@@ -412,7 +442,8 @@ class Audio {
             ratio = Atom.clamp(0, ratio, 1);
     
             audio.volume = ratio;
-            this.volume = ratio;
+            if (ratio > 0)
+                this.volume = ratio;    // Conserve le volume dans une variable pour unmute
         }
     }
 }
@@ -420,3 +451,5 @@ class Audio {
 Audio.prototype.NO_LOOP = 0;
 Audio.prototype.LOOP = 1;
 Audio.prototype.LOOP_UNIQUE = 2;
+
+Audio.prototype.DEFAULT_STEP = 5;
