@@ -61,7 +61,7 @@ class Audio {
         this.bar_volume.player = this;
         this.interface.className = "audio " + options.style;
         this.menu.className = "menu";
-        this.btn_lecture.className = "btn icon play";
+        this.btn_lecture.className = "btn icon spinner-full geometrics";
 
         this.options = {
             btnStop: options.btnStop,
@@ -249,11 +249,12 @@ class Audio {
     }
 
     stop() {
+        if (this.audio.readyState === 0)    // Si audio n'est pas prêt
+            return false;
+
         this.btn_lecture.className = "btn icon play";
-        if (this.audio.readyState !== 0) { // Evite les exceptions sous IE lorsqu'aucun media n'est chargé
-            this.audio.pause();
-            this.audio.currentTime = 0;
-        }
+        this.audio.pause();
+        this.audio.currentTime = 0;
     }
 
     forward() {
