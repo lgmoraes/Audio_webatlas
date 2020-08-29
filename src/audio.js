@@ -224,6 +224,12 @@ class Audio {
                 e.audio.play();
             }
         });
+        this.audio.addEventListener('error', function () {
+            var error = e.audio.error;
+
+            if(error.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED)
+                e.error();
+        });
     }
 
     loadMedia(media) {
@@ -419,6 +425,12 @@ class Audio {
             Atom.removeClass("disabled", btn);
         else
             Atom.addClass("disabled", btn);
+    }
+
+    error() {
+        var btn = this.btn_lecture;
+
+        btn.className = "btn icon warning";
     }
 
     eventsHandler(e) {
