@@ -3,8 +3,8 @@
 .audio {
     width: 100%;
     color: white;
-    line-height: 36px;
-    font-family: "WebAtlas";
+    line-height: 35px;
+    font-family: "WebAtlas-base";
     font-size: 20px;
     cursor: default;
     position: absolute;
@@ -114,9 +114,14 @@
 }
 
 .audio .timer {
-    font-family: "WebAtlas-icons";
+    font-family: "WebAtlas-base";
     font-size: 15px;
     vertical-align: top;
+    position: relative;
+    bottom: .05em;
+}
+.audio .timer.slash {
+    bottom: .01em;
 }
 
 .audio .speaker-high::before {

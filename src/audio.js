@@ -89,7 +89,7 @@ class Audio {
         this.timer_actual.className = "timer";
         this.timer_end.className = "timer";
         var timer_slash = Atom.divTxt("20", "/");
-        timer_slash.className = "timer";
+        timer_slash.className = "timer slash";
         this.menu.appendChild(Atom.widthSpace(20));
         this.menu.appendChild(this.btn_lecture);
         this.menu.appendChild(this.hitbox_volume);

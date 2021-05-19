@@ -6,7 +6,7 @@
   "author": "Louis Moraes <lmoraes@hotmail.fr>",
   "license": "MIT",
   "dependencies": {
-    "atom_webatlas": "^1.1.0",
-    "font_webatlas": "git+https://github.com/lgmoraes/Font_webatlas.git"
+    "atom_webatlas": "^1.1.1",
+    "font_webatlas": "^2.0.1"
   }
 }
