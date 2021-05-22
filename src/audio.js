@@ -60,21 +60,25 @@ class Audio
         this.progressBar_buffer = document.createElement('div');
         this.progressBar_cursor = document.createElement('div');
         this.btn_lecture = document.createElement('div');
+        this.btn_next = document.createElement('div');
         this.hitbox_volume = document.createElement('div');
         this.btn_volume = document.createElement('div');
         this.bar_volume = document.createElement('div');
         this.barRemplissage_volume = document.createElement('div');
         this.timer_actual = Atom.divTxt("auto", "0:00");
         this.timer_end = Atom.divTxt("auto", "0:00");
+
         this.interface.className = "audio " + options.style;
         this.menu.className = "menu";
         this.btn_lecture.className = "btn icon spinner-full geometrics";
+        this.btn_next.className = "btn icon next";
 
         // PROGRESS BAR
         this.progressBar.className = "progressBar";
         this.progressBar_actual.className = "progressBar_actual";
         this.progressBar_buffer.className = "progressBar_buffer";
         this.progressBar_cursor.className = "progressBar_cursor";
+
         // VOLUME
         this.btn_volume.className = "btn icon speaker-high";
         this.hitbox_volume.className = "hitbox_volume";
@@ -83,13 +87,16 @@ class Audio
         this.hitbox_volume.appendChild(this.btn_volume);
         this.hitbox_volume.appendChild(this.bar_volume);
         this.bar_volume.appendChild(this.barRemplissage_volume);
+
         // TIMER
         this.timer_actual.className = "timer";
         this.timer_end.className = "timer";
         var timer_slash = Atom.divTxt("20", "/");
         timer_slash.className = "timer slash";
+
         this.menu.appendChild(Atom.widthSpace(20));
         this.menu.appendChild(this.btn_lecture);
+        this.menu.appendChild(this.btn_next);
         this.menu.appendChild(this.hitbox_volume);
         this.menu.appendChild(Atom.widthSpace(15));
         this.menu.appendChild(this.timer_actual);
@@ -103,6 +110,8 @@ class Audio
         options.element_dest.appendChild(this.interface);
 
         /* CUSTOM MENU */
+        if (options.btnPrevious)
+            this.enableBtnPrevious();
         if (options.btnStop)
             this.enableBtnStop();
         if (options.btnLoop)
@@ -137,6 +146,12 @@ class Audio
                 e.audio.play();
                 this.className = "btn icon pause"; // Redemarrer l'audio n'active pas l'event onplay sous IE
             }
+        };
+        this.btn_next.onmousedown = function () {
+            if (e.random)
+                e.playRandom();
+            else
+                e.next();
         };
         this.btn_volume.onclick = function () {
             var audio = e.audio;
@@ -252,6 +267,35 @@ class Audio
         this.mediaList.push(media);
     }
 
+    loadList(mediaList) {
+        this.mediaList = mediaList;
+        this.mediaCursor = 0;
+        this.majBtns();
+        this.loadMedia(this.mediaList[0]);
+    }
+
+    next() {
+        this.mediaCursor++;
+
+        if (this.mediaCursor >= this.mediaList.length) {
+            this.mediaCursor = 0;
+        }
+
+        this.loadMedia(this.mediaList[this.mediaCursor]);
+        this.audio.play();
+    }
+
+    previous() {
+        this.mediaCursor--;
+
+        if (this.mediaCursor < 0) {
+            this.mediaCursor = this.mediaList.length-1;
+        }
+
+        this.loadMedia(this.mediaList[this.mediaCursor]);
+        this.audio.play();
+    }
+
     stop() {
         if (this.audio.readyState === 0)    // Si audio n'est pas prêt
             return false;
@@ -308,6 +352,59 @@ class Audio
         this.barRemplissage_volume.style.width = (volume * 100) + "%";
     }
 
+    majBtns() {
+        if (this.mediaList.length > 1) {
+            this.enableBtnNext();
+            if (this.btn_previous)
+                this.enableBtnPrevious();
+            if (this.btn_random)
+                this.enableBtnRandom();
+        }
+        else {
+            this.disableBtnNext();
+            if (this.btn_previous)
+                this.disableBtnPrevious();
+            if (this.btn_random)
+                this.disableBtnRandom();
+        }
+    }
+
+    playRandom() {
+        this.mediaCursor = Atom.getRandomInt(0, this.mediaList.length-1);
+        this.loadMedia(this.mediaList[this.mediaCursor]);
+        this.audio.play();
+    }
+
+    enableBtnNext() {
+        this.btn_next.style.display = "inline-block";
+    }
+    disableBtnNext() {
+        this.btn_next.style.display = "none";
+    }
+
+    enableBtnPrevious() {
+        if (this.btn_previous === undefined) {
+            var e = this;
+
+            this.btn_previous = document.createElement('div');
+            this.btn_previous.className = "btn icon previous";
+
+            this.menu.insertBefore(this.btn_previous, this.btn_lecture);
+
+            this.btn_previous.onclick = function () {
+                if (e.random)
+                    e.playRandom();
+                else
+                    e.previous();
+            };
+        }
+
+        this.btn_previous.style.display = "inline-block";
+    }
+    disableBtnPrevious() {
+        this.btn_previous.style.display = "none";
+    }
+
     enableBtnStop() {
         if (this.btn_stop === undefined) {
             var e = this;
@@ -315,7 +412,7 @@ class Audio
             this.btn_stop = document.createElement('div');
             this.btn_stop.className = "btn icon stop";
 
-            this.menu.insertBefore(this.btn_stop, this.btn_volume.parentElement);
+            this.menu.insertBefore(this.btn_stop, this.btn_next);
 
             this.btn_stop.onclick = function () {
                 e.stop();
@@ -387,7 +484,7 @@ class Audio
         var btn = e.btn_loop;
 
         e.loop++;
-        if(e.loop > e.LOOP_UNIQUE)
+        if (e.loop > e.LOOP_UNIQUE || (e.mediaList.length === 1 && e.loop > e.LOOP))
             e.loop = e.NO_LOOP;
 
         if (btn === undefined)
