@@ -51,6 +51,7 @@ class Audio
         
         this.mediaCursor = 0;
         this.mediaList = [];
+        this.mediaList_unshuffled = [];
 
         this.audio = document.createElement('audio');
         this.interface = document.createElement('div');
@@ -148,10 +149,7 @@ class Audio
             }
         };
         this.btn_next.onmousedown = function () {
-            if (e.random)
-                e.playRandom();
-            else
-                e.next();
+            e.next();
         };
         this.btn_volume.onclick = function () {
             var audio = e.audio;
@@ -392,9 +390,6 @@ class Audio
             this.menu.insertBefore(this.btn_previous, this.btn_lecture);
 
             this.btn_previous.onclick = function () {
-                if (e.random)
-                    e.playRandom();
-                else
                     e.previous();
             };
         }
@@ -513,10 +508,43 @@ class Audio
 
         e.random = !e.random;
 
-        if (e.random)
+        if (e.random) {
+            this.shuffleMediaList();
             Atom.removeClass("disabled", btn);
-        else
+        }
+        else {
+            this.unshuffleMediaList();
             Atom.addClass("disabled", btn);
+        }
+    }
+
+    shuffleMediaList() {
+        var newList = [];
+        var currentMedia = null;
+        
+        /* Save the correct order of the playlist */
+        this.mediaList_unshuffled = Array.from(this.mediaList);
+
+        /* Make the current media the first of the shuffled playlist */
+        currentMedia = this.mediaList.splice(this.mediaCursor, 1)[0];
+        newList.push(currentMedia);
+        this.mediaCursor = 0;
+        
+        while (this.mediaList.length > 0) {
+            var l = this.mediaList.length;
+            var i = Atom.getRandomInt(0, l-1);
+            
+            newList.push(this.mediaList.splice(i, 1)[0]);
+        }
+
+        this.mediaList = newList;
+    }
+
+    unshuffleMediaList() {
+        var currentMedia = this.mediaList[this.mediaCursor];
+
+        this.mediaList = Array.from(this.mediaList_unshuffled);
+        this.mediaCursor = this.mediaList.findIndex(function(i){return i === currentMedia});
     }
 
     error() {
