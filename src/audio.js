@@ -20,7 +20,7 @@ class Audio
         if (options.element_dest === undefined)
             options.element_dest = document.getElementsByTagName('body')[0];
         if (options.btnPrevious === undefined)
-            options.btnPrevious = false;
+            options.btnPrevious = true;
         if (options.loop === undefined)
             options.loop = this.NO_LOOP;
         if (options.random === undefined)
@@ -28,9 +28,9 @@ class Audio
         if (options.btnStop === undefined)
             options.btnStop = false;
         if (options.btnLoop === undefined)
-            options.btnLoop = false;
+            options.btnLoop = true;
         if (options.btnRandom === undefined)
-            options.btnRandom = false;
+            options.btnRandom = true;
         if (options.volume === undefined)
             options.volume = 1;
         if (options.step === undefined)
