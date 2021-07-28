@@ -1,16 +1,16 @@
 Atom.addEvent(window, "mousemove", function(e) {
-    if(Audio.prototype.activePlayer === null)
+    if(Audio_webatlas.prototype.activePlayer === null)
         return false;
     
-    Audio.prototype.eventsHandler.call(Audio.prototype.activePlayer, e);
+        Audio_webatlas.prototype.eventsHandler.call(Audio_webatlas.prototype.activePlayer, e);
 });
 
 Atom.addEvent(window, "mouseup", function() {
-    Audio.prototype.activePlayer = null;
+    Audio_webatlas.prototype.activePlayer = null;
 });
 
 
-class Audio
+class Audio_webatlas
 {
     constructor(options) {
         if (options === undefined)
@@ -162,9 +162,9 @@ class Audio
                 audio.volume = e.volume;
         };
         this.progressBar.onmousedown = function (event) {
-            Audio.prototype.activePlayer = e;
-            Audio.prototype.action = "CHANGE_CURRENT_TIME";
-            Audio.prototype.eventsHandler.call(e, event);
+            Audio_webatlas.prototype.activePlayer = e;
+            Audio_webatlas.prototype.action = "CHANGE_CURRENT_TIME";
+            Audio_webatlas.prototype.eventsHandler.call(e, event);
         };
         this.progressBar.onwheel = function (event) {
             if (Atom.wheelDirection(event) === "UP")
@@ -179,9 +179,9 @@ class Audio
                 e.backward();
         };
         this.bar_volume.onmousedown = function (event) {
-            Audio.prototype.activePlayer = e;
-            Audio.prototype.action = "CHANGE_VOLUME";
-            Audio.prototype.eventsHandler.call(e,event);
+            Audio_webatlas.prototype.activePlayer = e;
+            Audio_webatlas.prototype.action = "CHANGE_VOLUME";
+            Audio_webatlas.prototype.eventsHandler.call(e,event);
         };
         this.hitbox_volume.onwheel = function (event) {
             if (Atom.wheelDirection(event) === "UP")
@@ -554,8 +554,8 @@ class Audio
     }
 
     eventsHandler(e) {
-        var action = Audio.prototype.action;
-        var activePlayer = Audio.prototype.activePlayer;
+        var action = Audio_webatlas.prototype.action;
+        var activePlayer = Audio_webatlas.prototype.activePlayer;
     
         if(action === "CHANGE_CURRENT_TIME") {
             var progressBar = activePlayer.progressBar;
@@ -581,8 +581,8 @@ class Audio
     }
 }
 
-Audio.prototype.NO_LOOP = 0;
-Audio.prototype.LOOP = 1;
-Audio.prototype.LOOP_UNIQUE = 2;
+Audio_webatlas.prototype.NO_LOOP = 0;
+Audio_webatlas.prototype.LOOP = 1;
+Audio_webatlas.prototype.LOOP_UNIQUE = 2;
 
-Audio.prototype.DEFAULT_STEP = 5;
+Audio_webatlas.prototype.DEFAULT_STEP = 5;
