@@ -2,7 +2,7 @@ Atom.addEvent(window, "mousemove", function(e) {
     if(Audio_webatlas.prototype.activePlayer === null)
         return false;
     
-        Audio_webatlas.prototype.eventsHandler.call(Audio_webatlas.prototype.activePlayer, e);
+    Audio_webatlas.prototype.eventsHandler.call(Audio_webatlas.prototype.activePlayer, e);
 });
 
 Atom.addEvent(window, "mouseup", function() {
@@ -218,14 +218,7 @@ class Audio_webatlas
             e.updateCurrentTime();
         });
         Atom.addEvent(this.audio, "progress", function () {
-            var buf = this.buffered;
-            if (buf.length === 1) {
-                var buffuredTime = buf.end(0);
-                var ratio = buffuredTime / e.audio.duration;
-                e.progressBar_buffer.style.width = ratio * e.progressBar.offsetWidth + "px";
-            }
-            else
-                e.progressBar_buffer.style.width = "0";
+            e.updateBuffer();
         });
         Atom.addEvent(this.audio, "ended", function () {
             if (e.loop === e.NO_LOOP) {
@@ -245,7 +238,7 @@ class Audio_webatlas
                 e.error();
         });
     }
-
+    
     loadMedia(media) {
         if (typeof (media) === "string") // Est une URL
             this.audio.src = media;
@@ -323,11 +316,21 @@ class Audio_webatlas
         else
             this.timer_actual.innerHTML = t.h + ":" + Atom.zerofill(t.m, 2) + ":" + Atom.zerofill(t.s, 2);
         /* PROGRESS BAR */
-        var w = this.progressBar.offsetWidth;
         var ratio = this.audio.currentTime / this.audio.duration;
-        var positionX = w * ratio;
-        this.progressBar_actual.style.width = positionX + "px";
-        this.progressBar_cursor.style.left = positionX + "px";
+        this.progressBar_actual.style.width = ratio * 100 + "%";
+        this.progressBar_cursor.style.left = ratio * 100 + "%";
+    }
+
+    updateBuffer() {
+        var buf = this.audio.buffered;
+
+        if (buf.length === 1) {
+            var buffuredTime = buf.end(0);
+            var ratio = buffuredTime / this.audio.duration;
+            this.progressBar_buffer.style.width = ratio * 100 + "%";
+        }
+        else
+            this.progressBar_buffer.style.width = "0";
     }
     
     trigger_error(msg) {
